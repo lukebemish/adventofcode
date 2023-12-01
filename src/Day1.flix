@@ -51,30 +51,18 @@ def digitvalue(d: Digit): Int32 =
         case Digit.Nine => 9
     }
 
-instance ToString[Digit] {
-    pub def toString(d: Digit): String = stringvalue(d)
-}
-
-instance ToString[SearchState] {
-    pub def toString(x: SearchState): String = match x {
-        case SearchState.Searching(candidates) => "Searching(" + List.toString(candidates) + ")"
-        case SearchState.Found(value) => "Found(" + Int32.toString(value) + ")"
-    }
-}
-
-
-def digitmap(text: Digit -> String): Map[String, Digit] =
-    Map#{
-        text(Digit.Zero) => Digit.Zero,
-        text(Digit.One) => Digit.One,
-        text(Digit.Two) => Digit.Two,
-        text(Digit.Three) => Digit.Three,
-        text(Digit.Four) => Digit.Four,
-        text(Digit.Five) => Digit.Five,
-        text(Digit.Six) => Digit.Six,
-        text(Digit.Seven) => Digit.Seven,
-        text(Digit.Eight) => Digit.Eight,
-        text(Digit.Nine) => Digit.Nine
+def alldigits(): List[Digit] =
+    List#{
+        Digit.Zero,
+        Digit.One,
+        Digit.Two,
+        Digit.Three,
+        Digit.Four,
+        Digit.Five,
+        Digit.Six,
+        Digit.Seven,
+        Digit.Eight,
+        Digit.Nine
     }
 
 enum SearchState {
@@ -83,8 +71,8 @@ enum SearchState {
 }
 
 def finddigit(s: String, text: Digit -> String): Option[Int32] = 
-    let digits: Map[String, Digit] = digitmap(text);
-    let digitstrings: List[String] = Set.toList(Map.keysOf(digits));
+    let digits: Map[String, Digit] = List.toMap(List.map(d -> (text(d), d), alldigits()));
+    let digitstrings: List[String] = List.map(d -> text(d), alldigits());
     match String.foldLeft(state -> c -> updateiter(state, c, digits, digitstrings), SearchState.Searching(Nil), s) {
         case SearchState.Searching(_) => Option.None
         case SearchState.Found(value) => Option.Some(value)
