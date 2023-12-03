@@ -43,10 +43,15 @@ mod Day3 {
             (Nil, 0), line)),
             lines
         ));
-        (labels, Array.toVector(Array.map(rc, a -> Array.toVector(a), arr)))
+        let vec = Array.toVector(Array.map(rc, a -> Array.toVector(a), arr));
+        (labels, vec)
     }
 
-    pub def connections(source: Vector[Vector[Option[Label]]], target: Vector[Vector[Option[Label]]]): Map[Label, Set[Label]] = region rc {
+    pub def map(tuple: (List[Label], Vector[Vector[Option[Label]]])): (Vector[Label], Vector[Vector[Option[Int32]]]) =
+        let (labels, grid) = tuple;
+        (List.toVector(labels), foreach (row <- grid) yield foreach (entry <- row) yield Option.flatMap(l -> List.indexOf(l, labels), entry))
+
+    pub def connections[a: Type](source: Vector[Vector[Option[a]]], target: Vector[Vector[Option[a]]]): Map[a, Set[a]] with Order[a] = region rc {
         let builder = MutMap.new(rc);
         foreach(y <- List.range(0, Vector.length(source)); x <- List.range(0, Vector.length(Vector.get(0, source)))) {
             let number = Vector.get(x, Vector.get(y, source));
@@ -90,27 +95,38 @@ def day3(): Unit \ IO =
         case Err(_) => Console.println("Error opening file")
         case Ok(lines) =>
             let vectorlines = List.toVector(lines);
-            let (_, partmap) = Day3.parts(lines, vectorlines, c -> not Char.isDigit(c));
-            let (_, numbermap) = Day3.numbers(lines, vectorlines);
+            let (_, partmap) = Day3.map(Day3.parts(lines, vectorlines, c -> not Char.isDigit(c)));
+            let (numbers, numbermap) = Day3.map(Day3.numbers(lines, vectorlines));
             let connections = Day3.connections(numbermap, partmap);
             let partnumbers = Map.keysOf(connections);
-            let sum = Set.foldLeft(s -> p -> match Int32.fromString(Day3.findlabel(vectorlines, p)) {
+            let sum = Set.foldLeft(s -> p -> match Int32.fromString(Day3.findlabel(vectorlines, Vector.get(p, numbers))) {
                 case None => s
                 case Some(n) => s + n
             }, 0, partnumbers);
             Console.println("Part 1: " + Int32.toString(sum));
 
-            let (_, gearcandidatemap) = Day3.parts(lines, vectorlines, c -> c == '*');
+            let (_, gearcandidatemap) = Day3.map(Day3.parts(lines, vectorlines, c -> c == '*'));
             let gearconnections = Day3.connections(gearcandidatemap, numbermap);
-            let gearratios: List[Int32] = List.filterMap(o -> o, foreach(k <- Map.keysOf(gearconnections))
-                yield let numbers = Set.toList(Map.getWithDefault(k, Set#{}, gearconnections));
-                let h1 = Option.flatMap(l -> Int32.fromString(Day3.findlabel(vectorlines, l)), List.head(numbers));
-                let h2 = Option.flatMap(l -> Int32.fromString(Day3.findlabel(vectorlines, l)), List.head(List.drop(1, numbers)));
-                let h3 = List.head(List.drop(2, numbers));
-                match (h1, h2, h3) {
-                    case (Some(l1), Some(l2), None) =>
-                        Some(l1 * l2),
-                    case _ => None
-                });
-            Console.println("Part 2: " + Int32.toString(List.fold(gearratios)))
+
+            def numberpart(idx: Int32): Vector[Int32] = match Int32.fromString(Day3.findlabel(vectorlines, Vector.get(idx, numbers))) {
+                case None => Vector#{}
+                case Some(n) => Vector#{n}
+            };
+
+            def connectioncount(g: Int32): Vector[Int32] = Vector#{Set.size(Map.getWithDefault(g, Set#{}, gearconnections))};
+
+            let rules = #{
+                LabelCount(g, j) :- StarPart(g), let j = connectioncount(g).
+                Gear(g) :- LabelCount(g, 2).
+                PartNumber(l, n) :- Label(l), let n = numberpart(l).
+                Ratio(g, n1 * n2) :- Gear(g), Labels(g, l1), Labels(g, l2), PartNumber(l1, n1), PartNumber(l2, n2), if l1 > l2.
+            };
+            let starparts = inject Map.keysOf(gearconnections) into StarPart;
+            let labels = inject List.range(0, Vector.length(numbers)) into Label;
+            let neighbors = inject List.flatten(
+                foreach (k <- Map.keysOf(gearconnections)) yield
+                    foreach (v <- Map.getWithDefault(k, Set#{}, gearconnections)) yield (k, v)
+            ) into Labels;
+            let result = query rules, starparts, labels, neighbors select r from Ratio(g, r);
+            Console.println("Part 2: " + Int32.toString(Vector.fold(result)))
     }
