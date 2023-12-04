@@ -46,6 +46,5 @@ def day4(): Unit \ IO =
                         cardcount(count + extracount + 1, rest, joined)
                 }
             );
-            //Console.println("Part 2: ${cardcount(0, 5 :: 1 :: 2 :: 0 :: 0 :: 3 :: 0 :: 0 :: Nil, Nil)}")
             Console.println("Part 2: ${cardcount(0, foreach(c <- cards) yield Day4.matching(c), Nil)}")
     }
