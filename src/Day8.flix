@@ -65,6 +65,5 @@ def day8(): Unit \ IO =
             let toreachcycle = List.map(match(s, _) -> s, List.map(s -> navigate(0, s, 0, t -> s == t), cyclestarts));
             println("Are cycles and starts equal: ${toreachend == toreachcycle}");
             println("Part 2: ${Day8.lcm(List.map(i -> Int32.toInt64(i), toreachcycle))}")
-            //println("Part 2: ${navigate2(0, endswitha, instructions)}")
         case _ => Console.println("Error opening file")
     }
