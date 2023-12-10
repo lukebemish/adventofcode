@@ -71,15 +71,10 @@ mod Day10 {
                     let cNew = Vector.get(x1, Vector.get(y1, map));
                     let inside1 = insidepathlength(insideArea, isX, isY, cNew, direction, insideReal);
                     let outside1 = insidepathlength(outsideArea, osX, osY, cNew, direction, outsideReal);
-                    let (newInsideArea, _, _) = inside1;
-                    let (newOutsideArea, _, _) = outside1;
-                    if (x1 == xO and y1 == yO)
-                        (newInsideArea, newOutsideArea)
-                    else
-                        let logLess = if (distance1 > 3) Map.remove((xO, yO), log1) else log1;
-                        acc(inside1, outside1, logLess, (x1, y1, distance1))
+                    acc(inside1, outside1, log1, (x1, y1, distance1))
             }
         );
+        // Using (0, 0) as start means that it doesn't matter if we lose the first/last connection
         acc((0, (0, 0), (0, 0)), (0, (0, 0), (0, 0)), Map#{(xO, yO) => 0}, (xO, yO, 0))
 
     def travel(map: Vector[Vector[Char]], position: (Int32, Int32), log: Map[(Int32, Int32), Int32], distance: Int32, oneWay: Bool): (Map[(Int32, Int32), Int32], List[(Int32, Int32, Int32, Direction)]) =
