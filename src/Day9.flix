@@ -3,15 +3,12 @@ mod Day9 {
 
     pub def allzeros(reversed: List[Int32]): Bool = List.length(List.filter(i -> i != 0, reversed)) == 0
 
-    def builddiffs(reversed: List[Int32], diffs: List[List[Int32]]): List[List[Int32]] =
-        if (allzeros(reversed)) diffs else
-        let diff = diff(reversed);
-        builddiffs(diff, diff :: diffs)
-
     pub def extrapolate(reversed: List[Int32]): Int32 =
-        let diffs = builddiffs(reversed, reversed :: Nil);
-        let heads = List.filterMap(l -> List.head(l), diffs);
-        List.sum(heads)
+        if (allzeros(reversed)) 0 else
+        match reversed {
+            case Nil => 0
+            case h :: _ => h + extrapolate(diff(reversed))
+        }
 }
 
 def day9(): Unit \ IO =
