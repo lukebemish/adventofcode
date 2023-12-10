@@ -130,7 +130,10 @@ def day10(): Unit \ IO =
             };
             let arearesult = forA((x, y, _) <- startPos) yield Day10.area(chars, (x, y));
             match arearesult {
-                case Some(a) => println("Part 2: ${a}")
+                case Some(a) => (
+                    let (i, o) = a;
+                    println("Part 2: ${Int32.abs(Int32.max(i, o))/2}")
+                )
                 case _ => ()
             }
         case _ => Console.println("Error opening file")
