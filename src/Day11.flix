@@ -26,7 +26,7 @@ def day11(): Unit \ IO =
                     let distances = List.flatten(List.map(match (x1, y1) -> List.map(match (x2, y2) -> if (x1 != x2 or y1 != y2) pairDistance(x1, y1, x2, y2, 2i64) else 0i64, filtered), filtered));
                     println("Part 1: ${List.fold(distances)/2i64}");
                     let distances2 = List.flatten(List.map(match (x1, y1) -> List.map(match (x2, y2) -> if (x1 != x2 or y1 != y2) pairDistance(x1, y1, x2, y2, 1000000i64) else 0i64, filtered), filtered));
-                    println("Part 1: ${List.fold(distances2)/2i64}")
+                    println("Part 2: ${List.fold(distances2)/2i64}")
                 case _ => println("Error parsing file")
             }
         case _ => println("Error opening file")
