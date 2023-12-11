@@ -132,7 +132,7 @@ def day10(): Unit \ IO =
             match arearesult {
                 case Some(a) => (
                     let (i, o) = a;
-                    println("Part 2: ${Int32.abs(Int32.max(i, o))/2}")
+                    println("Part 2: ${Int32.min(Int32.abs(i), Int32.abs(o))/2}")
                 )
                 case _ => ()
             }
