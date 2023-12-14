@@ -20,7 +20,6 @@ def day14(): Unit \ IO =
             println("Part 1: ${load}");
             def cycle(ls) = ls |> tilt |> tilt |> tilt |> tilt;
             let cycles = 1000000000;
-            //let cycles = 10001;
             def runcycles(last, ls, n: Int32) = match n {
                 case 0 => ls
                 case _ => 
