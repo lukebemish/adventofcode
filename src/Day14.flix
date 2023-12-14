@@ -8,7 +8,6 @@ mod Day14 {
 def day14(): Unit \ IO =
     match Files.readLines("input/day14") {
         case Ok(lines) =>
-            //let grid: Vector[Vector[Char]] = lines |> List.map(String.toVector) |> List.toVector;
             // (built, dots)
             def tilt(ls: List[List[Char]]): List[List[Char]] = ls |> List.foldLeft(pairs -> chars ->
                 Day14.smartZip(pairs, chars, (Nil, Nil)) |>
