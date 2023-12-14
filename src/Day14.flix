@@ -8,6 +8,7 @@ mod Day14 {
 def day14(): Unit \ IO =
     match Files.readLines("input/day14") {
         case Ok(lines) =>
+            let start = Time.Epoch.milliseconds();
             // (built, dots)
             def tilt(ls: List[List[Char]]): List[List[Char]] = ls |> List.foldLeft(pairs -> chars ->
                 Day14.smartZip(pairs, chars, (Nil, Nil)) |>
@@ -35,6 +36,8 @@ def day14(): Unit \ IO =
             };
             let final = runcycles(Nil, lines |> List.map(String.toList), cycles);
             let finalLoad = final |> List.mapWithIndex(idx -> column -> column |> List.map(char -> if (char == 'O') rows - idx else 0) |> List.sum) |> List.sum;
-            println("Part 2: ${finalLoad}")
+            println("Part 2: ${finalLoad}");
+            let end = Time.Epoch.milliseconds();
+            println("Time: ${Int64.toFloat64(end - start)/1000.0}s")
         case _ => println("Error opening file")
     }
