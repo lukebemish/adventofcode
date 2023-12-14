@@ -15,9 +15,9 @@ def day14(): Unit \ IO =
                 List.map(match ((built, dots), char) -> if (char == 'O') (char :: built, dots) else if (char == '.') (built, '.' :: dots) else ('#' :: dots ++ built, Nil)),
                 Nil
             ) |> List.map(match (built, dots) -> dots ++ built);
-            let collapsed = lines |> List.map(String.toList) |> tilt |> List.map(List.reverse);
+            let collapsed = lines |> List.map(String.toList) |> tilt;
             let rows = List.length(lines);
-            let load = collapsed |> List.map(column -> column |> List.mapWithIndex(idx -> char -> if (char == 'O') rows - idx else 0) |> List.sum) |> List.sum;
+            let load = collapsed |> List.map(column -> column |> List.mapWithIndex(idx -> char -> if (char == 'O') idx + 1 else 0) |> List.sum) |> List.sum;
             println("Part 1: ${load}");
             def cycle(ls) = ls |> tilt |> tilt |> tilt |> tilt;
             let cycles = 1000000000;
