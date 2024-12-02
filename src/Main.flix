@@ -17,6 +17,7 @@ def main(): Unit \ IO =
             case "12" => day12()
             case "13" => day13()
             case "14" => day14()
+            case "23" => day23()
             case _ => println("Invalid day given to run")
         }
     }
