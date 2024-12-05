@@ -1,8 +1,3 @@
-using Pkg
-Pkg.activate(".")
-
-##
-
 lines = readlines("data/day1.txt")
 values = zeros(Int32, (2, length(lines)))
 for (i, line) ∈ enumerate(lines)

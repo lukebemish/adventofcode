@@ -1,8 +1,3 @@
-using Pkg
-Pkg.activate(".")
-
-##
-
 lines = readlines("data/day4.txt")
 
 total = 0

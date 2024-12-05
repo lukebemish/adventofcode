@@ -1,8 +1,3 @@
-using Pkg
-Pkg.activate(".")
-
-##
-
 safecount = 0
 for line in readlines("data/day2.txt")
     levels = map(split(line, " ")) do j parse(Int, j) end

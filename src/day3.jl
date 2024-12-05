@@ -1,8 +1,3 @@
-using Pkg
-Pkg.activate(".")
-
-##
-
 instructions = join(readlines("data/day3.txt"))
 
 total = 0
