@@ -2,6 +2,17 @@ instructions = readlines("data/day5.txt")
 combos = map(instructions[1:findfirst(==(""), instructions)-1]) do combo
     map(split(combo, "|")) do i parse(Int, i) end
 end
+
+comparemap = Dict{Int, Set{Int}}()
+for combo in combos
+    map = get!(comparemap, combo[1], Set{Int}())
+    push!(map, combo[2])
+end
+
+function lt(a, b)
+    return b ∈ get(comparemap, a, Set{Int}())
+end
+
 pages = map(instructions[findfirst(==(""), instructions)+1:end]) do toprint
     map(split(toprint, ",")) do i parse(Int, i) end
 end
@@ -19,8 +30,8 @@ for pagenums ∈ pages
         map[pagenum] = i
     end
     valid = true
-    for rule ∈ combos
-        if haskey(map, rule[1]) && haskey(map, rule[2]) && map[rule[1]] > map[rule[2]]
+    for (a, b) ∈ zip(pagenums[1:end-1], pagenums[2:end])
+        if lt(b, a)
             valid = false
             break
         end
@@ -37,42 +48,11 @@ println("Part 1: $total")
 
 ##
 
-containsmap = Dict{Int, Dict{Int, Bool}}()
-for combo in combos
-    if !haskey(containsmap, combo[1])
-        containsmap[combo[1]] = Dict{Int, Bool}()
-    end
-    containsmap[combo[1]][combo[2]] = true
-    if !haskey(containsmap, combo[2])
-        containsmap[combo[2]] = Dict{Int, Bool}()
-    end
-    containsmap[combo[2]][combo[1]] = false
-end
-
 total = 0
 for pagenums ∈ invalid
-    ordering = zeros(Int, length(pagenums))
-    i = 1
-    for (j, num) ∈ enumerate(pagenums)
-        has = get(containsmap, num, Dict())
-        target = i
-        for (x, e) ∈ enumerate(ordering[1:i-1])
-            if haskey(has, e)
-                numleftofe = has[e]
-                if numleftofe
-                    target = x
-                    break
-                end
-            end
-        end
-        ordering[target+1:i] = ordering[target:i-1]
-        ordering[target] = num
-        i+=1
-    end
-    if ordering != pagenums
-        middle = ordering[div(length(ordering)+1,2)]
-        total += middle
-    end
+    orderednums = sort(pagenums, lt=lt)
+    middle = orderednums[div(length(orderednums)+1,2)]
+    total += middle
 end
 
 println("Part 2: $total")
