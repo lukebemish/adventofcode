@@ -52,7 +52,7 @@ function day6()
         x,y = initialpos
         dx,dy = initialdir
 
-        visitedpathouter = zeros(Bool, (size(obstructed)...,4))
+        visitedpathouter = zeros(Int, (size(obstructed)...,4))
         visitedpoints = zeros(Bool, size(obstructed))
         tasks = Task[]
 
@@ -68,19 +68,22 @@ function day6()
             end
         end
 
+        i = 0
         while inbounds(x,y,obstructed)
+            i += 1
             visitedpoints[x,y] = true
-            visitedpathouter[x,y,idxdir(dx,dy)] = true
+            visitedpathouter[x,y,idxdir(dx,dy)] = i
 
             if inbounds(x+dx, y+dy, obstructed)
                 ox,oy = x+dx,y+dy
                 if obstructed[ox,oy]
                     dx,dy = [0 1;-1 0] * [dx,dy]
                     continue
-                elseif (ox,oy) ∉ visitedpoints
+                elseif !visitedpoints[ox,oy]
                     ix,iy,idx,idy = x,y,dx,dy
-                    visitedpath = copy(visitedpathouter)
+                    visitedpath = zeros(Bool, (size(obstructed)...,4))
 
+                    tasknum = i
                     t = @task begin
                         isloop = false
                         while inbounds(ix,iy,obstructed)
@@ -90,7 +93,7 @@ function day6()
                             else
                                 ix += idx
                                 iy += idy
-                                if inbounds(ix, iy, obstructed) && visitedpath[ix,iy,idxdir(idx,idy)]
+                                if inbounds(ix, iy, obstructed) && (visitedpath[ix,iy,idxdir(idx,idy)] || visitedpathouter[ix,iy,idxdir(idx,idy)] <= tasknum)
                                     isloop = true
                                     break
                                 end
