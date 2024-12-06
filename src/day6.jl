@@ -54,7 +54,7 @@ function day6()
 
         visitedpathouter = zeros(Int, (size(obstructed)...,4))
         visitedpoints = zeros(Bool, size(obstructed))
-        results = []
+        tasks = Task[]
 
         function idxdir(dx,dy)
             if dx == 0 && dy == 1
@@ -83,28 +83,33 @@ function day6()
                     ix,iy,idx,idy = x,y,dx,dy
                     visitedpath = zeros(Bool, (size(obstructed)...,4))
 
-                    isloop = false
-                    while inbounds(ix,iy,obstructed)
-                        visitedpath[ix,iy,idxdir(idx,idy)] = true
-                        if inbounds(ix+idx, iy+idy, obstructed) && (obstructed[ix+idx,iy+idy] || (ix+idx,iy+idy) == (ox,oy))
-                            idx,idy = [0 1;-1 0] * [idx,idy]
-                        else
-                            ix += idx
-                            iy += idy
-                            if inbounds(ix, iy, obstructed) && (visitedpath[ix,iy,idxdir(idx,idy)] || visitedpathouter[ix,iy,idxdir(idx,idy)] <= i)
-                                isloop = true
-                                break
+                    tasknum = i
+                    t = @task begin
+                        isloop = false
+                        while inbounds(ix,iy,obstructed)
+                            visitedpath[ix,iy,idxdir(idx,idy)] = true
+                            if inbounds(ix+idx, iy+idy, obstructed) && (obstructed[ix+idx,iy+idy] || (ix+idx,iy+idy) == (ox,oy))
+                                idx,idy = [0 1;-1 0] * [idx,idy]
+                            else
+                                ix += idx
+                                iy += idy
+                                if inbounds(ix, iy, obstructed) && (visitedpath[ix,iy,idxdir(idx,idy)] || 0 < visitedpathouter[ix,iy,idxdir(idx,idy)] ≤ tasknum)
+                                    isloop = true
+                                    break
+                                end
                             end
                         end
+                        isloop, (ox,oy)
                     end
-                    push!(results, (isloop, (ox,oy)))
+                    schedule(t)
+                    push!(tasks, t)
                 end
             end
             x += dx
             y += dy
         end
 
-        looppositions = filter(results) do (isloop, _) isloop end |> l -> map(l) do (_, pos) pos end |> unique |> length
+        looppositions = map(tasks) do t fetch(t) end |> l -> filter(l) do (isloop, _) isloop end |> l -> map(l) do (_, pos) pos end |> unique |> length
 
         println("Part 2: $looppositions")
     end
