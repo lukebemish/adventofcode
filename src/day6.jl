@@ -23,16 +23,16 @@ function day6()
 
     ## Part 1
 
+    function inbounds(x,y,plot)
+        return 1 ≤ x ≤ size(plot,1) && 1 ≤ y ≤ size(plot,2)
+    end
+
     function part1()
         x,y = initialpos
         dx,dy = initialdir
 
         visited = zeros(Bool, size(obstructed))
         visited[x,y] = true
-
-        function inbounds(x,y,plot)
-            return 1 ≤ x ≤ size(plot,1) && 1 ≤ y ≤ size(plot,2)
-        end
 
         while inbounds(x,y,obstructed)
             visited[x,y] = true
