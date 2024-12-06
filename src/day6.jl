@@ -101,6 +101,7 @@ function day6()
                         end
                         isloop, (ox,oy)
                     end
+                    t.sticky = false
                     schedule(t)
                     push!(tasks, t)
                 end
