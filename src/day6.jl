@@ -52,13 +52,25 @@ function day6()
         x,y = initialpos
         dx,dy = initialdir
 
-        visitedpathouter = Set{Tuple{Int,Int,Int,Int}}()
-        visitedpoints = Set{Tuple{Int,Int}}()
-        looppositions = Set{Tuple{Int,Int}}()
+        visitedpathouter = zeros(Bool, (size(obstructed)...,4))
+        visitedpoints = zeros(Bool, size(obstructed))
         tasks = Task[]
+
+        function idxdir(dx,dy)
+            if dx == 0 && dy == 1
+                return 1
+            elseif dx == 1 && dy == 0
+                return 2
+            elseif dx == 0 && dy == -1
+                return 3
+            else
+                return 4
+            end
+        end
+
         while inbounds(x,y,obstructed)
-            push!(visitedpathouter, (x,y,dx,dy))
-            push!(visitedpoints, (x,y))
+            visitedpoints[x,y] = true
+            visitedpathouter[x,y,idxdir(dx,dy)] = true
 
             if inbounds(x+dx, y+dy, obstructed)
                 ox,oy = x+dx,y+dy
@@ -67,18 +79,18 @@ function day6()
                     continue
                 elseif (ox,oy) ∉ visitedpoints
                     ix,iy,idx,idy = x,y,dx,dy
-                    visitedpath = Set{Tuple{Int,Int,Int,Int}}(visitedpathouter)
+                    visitedpath = copy(visitedpathouter)
 
                     t = @task begin
                         isloop = false
                         while inbounds(ix,iy,obstructed)
-                            push!(visitedpath, (ix,iy,idx,idy))
+                            visitedpath[ix,iy,idxdir(idx,idy)] = true
                             if inbounds(ix+idx, iy+idy, obstructed) && (obstructed[ix+idx,iy+idy] || (ix+idx,iy+idy) == (ox,oy))
                                 idx,idy = [0 1;-1 0] * [idx,idy]
                             else
                                 ix += idx
                                 iy += idy
-                                if (ix,iy,idx,idy) ∈ visitedpath
+                                if inbounds(ix, iy, obstructed) && visitedpath[ix,iy,idxdir(idx,idy)]
                                     isloop = true
                                     break
                                 end
