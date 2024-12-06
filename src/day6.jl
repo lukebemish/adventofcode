@@ -109,9 +109,9 @@ function day6()
             y += dy
         end
 
-        looppositions = Set{Tuple{Int,Int}}(map(tasks) do t fetch(t) end |> l -> filter(l) do (isloop, _) isloop end |> l -> map(l) do (_, pos) pos end)
+        looppositions = map(tasks) do t fetch(t) end |> l -> filter(l) do (isloop, _) isloop end |> l -> map(l) do (_, pos) pos end |> l -> unique(l) |> length
 
-        println("Part 2: $(length(looppositions))")
+        println("Part 2: $looppositions")
     end
     @time part2()
 end
