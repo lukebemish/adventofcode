@@ -1,7 +1,7 @@
 function day6()
     initialpos = (0,0)
     initialdir = (0,0)
-    obstructed = let chars = pairs(permutedims(reduce(hcat, map(readlines("data/day6.txt")) do line collect(line) end)))
+    obstructed = let chars = permutedims(reduce(hcat, map(readlines("data/day6.txt")) do line collect(line) end))
         m = zeros(Bool, size(chars))
         for (idx, c) ∈ pairs(chars)
             if c == '^'
