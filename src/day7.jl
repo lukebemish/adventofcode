@@ -19,6 +19,9 @@ for line ∈ input
             else
                 calculated *= rest[j]
             end
+            if calculated > target
+                break
+            end
             x >>= 1
         end
         if calculated == target
@@ -27,6 +30,8 @@ for line ∈ input
         end
     end
 end
+
+println("Part 1: $total")
 
 ## Part 2
 
@@ -46,6 +51,9 @@ for line ∈ input
                 calculated *= 10^length(string(rest[j]))
                 calculated += rest[j]
             end
+            if calculated > target
+                break
+            end
             x = div(x, 3)
         end
         if calculated == target
@@ -54,5 +62,7 @@ for line ∈ input
         end
     end
 end
+
+println("Part 2: $total")
 
 ##
