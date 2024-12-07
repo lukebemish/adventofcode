@@ -7,7 +7,7 @@ function day7()
 
     function part1()
         total = 0
-        for line ∈ input
+        Threads.@threads for line ∈ input
             target = line[1]
             rest = line[2:end]
             for i ∈ 0:2^(length(rest)-1)-1
@@ -38,7 +38,7 @@ function day7()
 
     function part2()
         total = 0
-        for line ∈ input
+        Threads.@threads for line ∈ input
             target = line[1]
             rest = line[2:end]
             for i ∈ 0:3^(length(rest)-1)-1
