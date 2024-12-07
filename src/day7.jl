@@ -50,12 +50,12 @@ function day7()
                     elseif (x % 3) == 1
                         calculated *= rest[j]
                     else
-                        i = 1
+                        n = 1
                         next = rest[j]
-                        while i <= next
-                            i *= 10
+                        while n <= next
+                            n *= 10
                         end
-                        calculated *= i
+                        calculated *= n
                         calculated += next
                     end
                     if calculated > target
