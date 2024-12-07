@@ -50,8 +50,13 @@ function day7()
                     elseif (x % 3) == 2
                         calculated *= rest[j]
                     else
-                        calculated *= 10^length(string(rest[j]))
-                        calculated += rest[j]
+                        i = 1
+                        next = rest[j]
+                        while i <= next
+                            i *= 10
+                        end
+                        calculated *= i
+                        calculated += next
                     end
                     if calculated > target
                         break
