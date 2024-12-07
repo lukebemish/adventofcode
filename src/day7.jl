@@ -14,7 +14,7 @@ function day7()
                 calculated = rest[1]
                 x = i
                 for j ∈ 2:length(rest)
-                    if (x & 1) == 1
+                    if (x & 1) == 0
                         calculated += rest[j]
                     else
                         calculated *= rest[j]
@@ -45,9 +45,9 @@ function day7()
                 calculated = rest[1]
                 x = i
                 for j ∈ 2:length(rest)
-                    if (x % 3) == 1
+                    if (x % 3) == 0
                         calculated += rest[j]
-                    elseif (x % 3) == 2
+                    elseif (x % 3) == 1
                         calculated *= rest[j]
                     else
                         i = 1
