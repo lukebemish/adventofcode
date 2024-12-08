@@ -18,20 +18,11 @@ function day8()
                 if a != b
                     delta = b .- a
                     if ispart1
-                        n1 = b .+ delta
-                        n2 = a .- delta
-                        if checkbounds(Bool, antinodes, n1...)
-                            antinodes[n1...] = true
-                        end
-                        if checkbounds(Bool, antinodes, n2...)
-                            antinodes[n2...] = true
+                        n = b .+ delta
+                        if checkbounds(Bool, antinodes, n...)
+                            antinodes[n...] = true
                         end
                     else
-                        p = a
-                        while checkbounds(Bool, antinodes, p...)
-                            antinodes[p...] = true
-                            p = p .- delta
-                        end
                         p = b
                         while checkbounds(Bool, antinodes, p...)
                             antinodes[p...] = true
