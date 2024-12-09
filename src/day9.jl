@@ -94,17 +94,15 @@ function day9()
         end
 
         total = 0
-        list = []
+        index = 0
         for piece ∈ pieces
             if piece isa Chunk
-                append!(list, [piece.id for _ in 1:piece.length])
+                for _ ∈ 1:piece.length
+                    total += index * piece.id
+                    index += 1
+                end
             else
-                append!(list, [nothing for _ in 1:piece.length])
-            end
-        end
-        for (i, j) ∈ enumerate(list)
-            if !isnothing(j)
-                total += (i-1) * j
+                index += piece.length
             end
         end
         println(total)
