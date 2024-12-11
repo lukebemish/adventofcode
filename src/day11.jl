@@ -13,8 +13,8 @@ evenpair(n::Int, with1, with2, ::Val{CountByString}) = begin
 end
 
 evenpair(n::Int, with1, with2, ::Val{CountByLog10}) = begin
-    if log10(n) % 2 < 1
-        factor = Int(10 ^ div(log10(n), 2))
+    if log10(n) % 2 >= 1
+        factor = Int(10 ^ (div(log10(n), 2)+1))
         with2(div(n, factor), rem(n, factor))
     else
         with1(n)
