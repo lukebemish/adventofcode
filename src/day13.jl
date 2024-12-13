@@ -5,9 +5,11 @@ day13() = begin
         total = 0
 
         for i ∈ 1:div(length(lines)+1, 4)
-            a = map(match(r"Button A: X\+([0-9]+), Y\+([0-9]+)", lines[i*4-3])) do i parse(Int, i) end
-            b = map(match(r"Button B: X\+([0-9]+), Y\+([0-9]+)", lines[i*4-2])) do i parse(Int, i) end
-            target = map(match(r"Prize: X=([0-9]+), Y=([0-9]+)", lines[i*4-1])) do i parse(Int, i) end
+            interpret(t) = map(split(replace(t, r"[^0-9,]" => ""), ',')) do i parse(Int, i) end
+
+            a = interpret(lines[i*4-3])
+            b = interpret(lines[i*4-2])
+            target = interpret(lines[i*4-1])
             if part2
                 target .+= 10000000000000
             end
