@@ -99,6 +99,70 @@ calculate(plots, part2) = begin
     total
 end
 
+calculatefloodfill(plots, part2) = begin
+    total = 0
+    visited = zeros(Bool, size(plots))
+
+    rotate(idx) = CartesianIndex(idx[2], -idx[1])
+
+    for idx ∈ CartesianIndices(plots)
+        if !visited[idx]
+            type = plots[idx]
+            area = 0
+            count = 0
+            flood(pos) = begin
+                if !visited[pos]
+                    if !visited[pos] && plots[pos] === type
+                        visited[pos] = true
+                        area += 1
+                        if part2
+                            first = CartesianIndex(0, 1)
+                            diag = CartesianIndex(1, 1)
+                            second = CartesianIndex(1, 0)
+                            for _ ∈ 1:4
+                                first = rotate(first)
+                                diag = rotate(diag)
+                                second = rotate(second)
+
+                                isfirst = checkbounds(Bool, plots, pos .+ first) && plots[pos .+ first] === type
+                                isdiag = checkbounds(Bool, plots, pos .+ diag) && plots[pos .+ diag] === type
+                                issecond = checkbounds(Bool, plots, pos .+ second) && plots[pos .+ second] === type
+
+                                if isfirst && issecond && !isdiag
+                                    count += 1
+                                elseif !isfirst && !issecond
+                                    count += 1
+                                end
+                            end
+                        else
+                            offset = CartesianIndex(0, 1)
+                            for _ ∈ 1:4
+                                offset = rotate(offset)
+                                nidx = pos .+ offset
+                                if !checkbounds(Bool, plots, nidx) || plots[nidx] !== type
+                                    count += 1
+                                end
+                            end
+                        end
+                        offset = CartesianIndex(0, 1)
+                        for _ ∈ 1:4
+                            offset = rotate(offset)
+                            nidx = pos .+ offset
+                            if checkbounds(Bool, plots, nidx)
+                                flood(nidx)
+                            end
+                        end
+                    end
+                end
+            end
+            flood(idx)
+            total += area * count
+        end
+    end
+
+    return total
+end
+
 day12() = begin
     plots = permutedims(reduce(hcat, map(readlines("data/day12.txt")) do line begin [Symbol(c) for c ∈ line] end end))
 
@@ -108,5 +172,13 @@ day12() = begin
 
     @time begin
         println("Part 2: $(calculate(plots, true))")
+    end
+
+    @time begin
+        println("Part 1 (floodfill): $(calculatefloodfill(plots, false))")
+    end
+
+    @time begin
+        println("Part 2 (floodfill): $(calculatefloodfill(plots, true))")
     end
 end
