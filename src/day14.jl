@@ -51,7 +51,10 @@ day14() = begin
         width = 101
         height = 103
         tilltime = lcm(101, 103)
-        values = [neighborscore(width, height, solve(width, height, time)) for time ∈ 1:tilltime]
+        values = zeros(Int, tilltime)
+        Threads.@threads for time ∈ 1:tilltime
+            values[time] = neighborscore(width, height, solve(width, height, time))
+        end
         maxtime = argmax(values)
         println("Part 2: $maxtime")
         plot(width, height, solve(width, height, maxtime))
