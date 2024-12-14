@@ -1,3 +1,5 @@
+using Statistics
+
 day14() = begin
     lines = readlines("data/day14.txt")
 
@@ -20,17 +22,7 @@ day14() = begin
         for (x, y) in finalvals
             plotted[y+1, x+1] += 1
         end
-        score = 0
-        kernel = [
-            1 1 1;
-            1 0 1;
-            1 1 1
-        ]
-        for (x, y) in finalvals
-            surroundings = plotted[mod.(y-1:y+1, height) .+ 1, mod.(x-1:x+1, width) .+ 1]
-            score += sum(surroundings .* kernel)
-        end
-        score
+        std(plotted)
     end
 
     plot(width, height, finalvals) = begin
@@ -51,12 +43,12 @@ day14() = begin
         width = 101
         height = 103
         tilltime = lcm(101, 103)
-        values = zeros(Int, tilltime)
+        values = zeros(Float64, tilltime)
         Threads.@threads for time ∈ 1:tilltime
             values[time] = neighborscore(width, height, solve(width, height, time))
         end
-        maxtime = argmax(values)
-        println("Part 2: $maxtime")
-        plot(width, height, solve(width, height, maxtime))
+        treetime = argmin(values)
+        println("Part 2: $treetime")
+        plot(width, height, solve(width, height, treetime))
     end
 end
