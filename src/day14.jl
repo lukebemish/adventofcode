@@ -19,15 +19,25 @@ day14() = begin
 
     neighborscore(width, height, finalvals) = begin
         plotted = zeros(Int, height, width)
-        for (x, y) in finalvals
-            plotted[y+1, x+1] += 1
+        mx = 0
+        my = 0
+        for (x, y) ∈ finalvals
+            mx += x
+            my += y
         end
-        std(plotted)
+        mx = div(mx, length(finalvals))
+        my = div(my, length(finalvals))
+        total = 0
+        for (x, y) ∈ finalvals
+            total += (x - mx)^2
+            total += (y - my)^2
+        end
+        total
     end
 
     plot(width, height, finalvals) = begin
         plotted = zeros(Int, height, width)
-        for (x, y) in finalvals
+        for (x, y) ∈ finalvals
             plotted[y+1, x+1] += 1
         end
         for y ∈ 1:height
