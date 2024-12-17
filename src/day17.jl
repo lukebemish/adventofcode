@@ -172,10 +172,6 @@ day17() = begin
             if isempty(remaining)
                 return aout
             end
-            is = [i for i ∈ 0:(1 << n) - 1 if begin
-                value = (aout << n) | i
-                evaluate(out[1]; a = value) == remaining[1]
-            end]
             for i ∈ 0:(1 << n) - 1
                 value = (aout << n) | i
                 if evaluate(out[1]; a = value) == remaining[1]
@@ -188,6 +184,9 @@ day17() = begin
             return nothing
         end
         value = findvalue(0, reverse(program))
+        if isnothing(value)
+            throw(ArgumentError("Could not find value to reconstruct program $program"))
+        end
         v = value
         checkinstructions = Int[]
         while v != 0
