@@ -92,7 +92,7 @@ day18() = begin
     end
 
     @time begin
-        i = 0
+        i = 1024 # Since we know part 1 is solvable
         while true
             cost, path = findpath(i)
             if isnothing(cost)
