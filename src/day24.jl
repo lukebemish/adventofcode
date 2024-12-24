@@ -93,13 +93,13 @@ correct(name::Symbol, expr::ExprContext{S}, lookup::Dict{ExprContext, Symbol}, s
     for v ∈ values(expr.lookup)
         if v isa BinaryExpr
             if nameof(v) == name
-                missingexpr, targetexpr = if lookup[ExprContext(v.a, expr.lookup)] == lookup[ExprContext(expr.expr.a, expr.lookup)]
+                missingexpr, targetexpr = if nameof(v.a) == nameof(expr.expr.a)
                     (v.b, expr.expr.b)
-                elseif lookup[ExprContext(v.a, expr.lookup)] == lookup[ExprContext(expr.expr.b, expr.lookup)]
+                elseif nameof(v.a) == nameof(expr.expr.b)
                     (v.b, expr.expr.a)
-                elseif lookup[ExprContext(v.b, expr.lookup)] == lookup[ExprContext(expr.expr.a, expr.lookup)]
+                elseif nameof(v.b) == nameof(expr.expr.a)
                     (v.a, expr.expr.b)
-                elseif lookup[ExprContext(v.b, expr.lookup)] == lookup[ExprContext(expr.expr.b, expr.lookup)]
+                elseif nameof(v.b) == nameof(expr.expr.b)
                     (v.a, expr.expr.a)
                 else
                     continue
