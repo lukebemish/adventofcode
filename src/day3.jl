@@ -1,35 +1,34 @@
-day3() = begin
-    readinput() = begin
-        map(readlines("data/day3.txt")) do line
-            map(collect(line)) do i parse(Int, i) end
+day3() = @time begin
+    readinput() = (map(c for c ∈ line) do i
+            parse(Int, i)
         end
-    end
+    for line ∈ readlines("data/day3.txt"))
 
     @time begin
         println("Part 1: $(
-            sum(map(readinput()) do line
+            sum(begin
                 maxval, maxidx = findmax(line)
                 if maxidx != length(line)
-                    return maxval * 10 + maximum(line[maxidx+1:end])
+                    maxval * 10 + maximum(view(line, maxidx+1:length(line)))
                 else
-                    return maximum(line[1:end-1]) * 10 + maxval
+                    maximum(view(line, 1:length(line) - 1)) * 10 + maxval
                 end
-            end)
+            end for line ∈ readinput())
         )")
     end
 
     @time begin
         println("Part 2: $(
-            sum(map(readinput()) do line
+            sum(begin
                 working = line
                 v = 0
                 for i ∈ 1:12
-                    maxval, maxidx = findmax(working[1:end-(12-i)])
+                    maxval, maxidx = findmax(view(working, 1:length(working)-(12-i)))
                     v = v*10+maxval
-                    working = working[maxidx+1:end]
+                    working = view(working, maxidx+1:length(working))
                 end
-                return v
-            end)
+                v
+            end for line ∈ readinput())
         )")
     end
 end
