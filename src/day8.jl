@@ -53,60 +53,41 @@ day8(exampledata) = begin
         groupcount = 0
         totalconnections = 0
         connections = zeros(Int, length(positions))
-        lastmaxdist = 0
-        stepsize = exampledata ? 10.0 : 1000.0
-        groupedpositions = groupbystep(positions, stepsize)
         remaining = length(positions)
-        while remaining > 1
-            distances = Dict{Pair{Int, Int}, Float64}()
-            mindist = stepsize .^ 2
-            for idx ∈ CartesianIndices(groupedpositions)
-                here = Tuple(idx)
-                left = max.(here .- 1, (1, 1, 1))
-                right = min.(here .+ 1, size(groupedpositions))
-                ranges = (:).(left, right)
-                for i ∈ groupedpositions[idx]
-                    for j ∈ vcat(groupedpositions[ranges...]...)
-                        if i >= j || haskey(distances, Pair(j, i))
-                            continue
-                        end
-                        dist = sum((positions[i] .- positions[j]) .^ 2)
-                        if dist <= mindist && dist > lastmaxdist
-                            distances[Pair(i, j)] = dist
-                        end
-                    end
-                end
+        distances = Pair{Pair{Int, Int}, Float64}[]
+        for (i, p1) ∈ enumerate(positions[2:end])
+            for (j, p2) ∈ enumerate(positions[1:i-1])
+                dist = sum((p1 .- p2) .^ 2)
+                push!(distances, Pair(Pair(i + 1, j), dist))
             end
-            for (pair, _) ∈ sort(collect(distances), by = x -> x[2])
-                group1, group2 = connections[pair.first], connections[pair.second]
-                totalconnections += 1
-                if group1 == 0 && group2 == 0
-                    groupcount += 1
-                    connections[pair.first] = groupcount
-                    connections[pair.second] = groupcount
-                    remaining -= 1
-                elseif group1 != 0 && group2 == 0
-                    connections[pair.second] = group1
-                    remaining -= 1
-                elseif group1 == 0 && group2 != 0
-                    connections[pair.first] = group2
-                    remaining -= 1
-                elseif group1 != group2
-                    connections[connections .== group2] .= group1
-                    remaining -= 1
-                end
-                if totalconnections == target
-                    groups = sort([i => sum(connections .== i) for i ∈ 1:groupcount], by = x -> x[2], rev = true)
-                    println("Part 1: $(prod(groups[1:3] .|> x -> x[2]))")
-                end
-                if remaining == 1
-                    println("Part 2: $(Int(positions[pair.first][1] * positions[pair.second][1]))")
-                    break
-                end
+        end
+        sort!(distances, by = x -> x[2])
+        for (pair, _) ∈ distances
+            group1, group2 = connections[pair.first], connections[pair.second]
+            totalconnections += 1
+            if group1 == 0 && group2 == 0
+                groupcount += 1
+                connections[pair.first] = groupcount
+                connections[pair.second] = groupcount
+                remaining -= 1
+            elseif group1 != 0 && group2 == 0
+                connections[pair.second] = group1
+                remaining -= 1
+            elseif group1 == 0 && group2 != 0
+                connections[pair.first] = group2
+                remaining -= 1
+            elseif group1 != group2
+                connections[connections .== group2] .= group1
+                remaining -= 1
             end
-            lastmaxdist = mindist
-            stepsize *= 2
-            groupedpositions = mergeadjacent(groupedpositions)
+            if totalconnections == target
+                groups = sort([i => sum(connections .== i) for i ∈ 1:groupcount], by = x -> x[2], rev = true)
+                println("Part 1: $(prod(groups[1:3] .|> x -> x[2]))")
+            end
+            if remaining == 1
+                println("Part 2: $(Int(positions[pair.first][1] * positions[pair.second][1]))")
+                break
+            end
         end
     end
 end
