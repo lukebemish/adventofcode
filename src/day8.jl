@@ -8,45 +8,6 @@ day8(exampledata) = begin
         end
     end
 
-    mineach(positions) = (
-        minimum([i[1] for i in positions]),
-        minimum([i[2] for i in positions]),
-        minimum([i[3] for i in positions]),
-    )
-
-    maxeach(positions) = (
-        maximum([i[1] for i in positions]),
-        maximum([i[2] for i in positions]),
-        maximum([i[3] for i in positions]),
-    )
-
-    groupbystep(positions, stepsize) = begin
-        lowest = mineach(positions)
-        pieces = (maxeach(positions) .- lowest) .÷ stepsize .+ 1 .|> Int
-        grid = Array{Vector{Int}, 3}(undef, pieces)
-        for idx ∈ eachindex(grid)
-            grid[idx] = Int[]
-        end
-        for (i, pos) ∈ enumerate(positions)
-            indices = ((pos .- lowest) .÷ stepsize .+ 1) .|> Int
-            push!(grid[indices...], i)
-        end
-        grid
-    end
-
-    mergeadjacent(groups) = begin
-        newsize = (size(groups) .+ 1) .÷ 2
-        grid = Array{Vector{Int}, 3}(undef, newsize)
-        for idx ∈ eachindex(grid)
-            grid[idx] = Int[]
-        end
-        for idx ∈ CartesianIndices(groups)
-            newidx = ((Tuple(idx) .- 1) .÷ 2) .+ 1
-            append!(grid[newidx...], groups[idx]...)
-        end
-        grid
-    end
-
     @time begin
         positions = readinput()
         target = exampledata ? 10 : 1000
