@@ -2,6 +2,8 @@ function day7()
     readinput() = begin
         lines = readlines("data/day7.txt")
         chars = reduce(vcat, permutedims.(collect.(lines)))
+        rowcount = size(chars, 1)
+        chars = hcat(fill('.', rowcount), chars, fill('.', rowcount))
         countarray = zeros(Int, size(chars))
         countarray[chars .== 'S'] .= 1
         splitcount = 0
@@ -14,14 +16,11 @@ function day7()
             incoming = last .== '|' .|| last .== 'S'
             split = incoming .&& (this .== '^')
             splitcount += sum(split)
-            splitright = [false; split[1:end-1]]
-            splitleft = [split[2:end]; false]
             direct = (!).(split) .&& incoming
-            this[splitright] .= '|'
-            this[splitleft] .= '|'
+            this[circshift(split, 1) .|| circshift(split, -1)] .= '|'
             this[direct] .= '|'
-            thiscount[splitleft] += lastcount[[split[1:end-1]; false]]
-            thiscount[splitright] += lastcount[[false; split[2:end]]]
+            thiscount[circshift(split, 1)] += lastcount[split]
+            thiscount[circshift(split, -1)] += lastcount[split]
             thiscount[direct] += lastcount[direct]
         end
         splitcount, countarray
